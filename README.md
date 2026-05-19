@@ -88,15 +88,15 @@ Sistem ini dibangun dengan pendekatan *High-Performance Pure Vectorization* meng
 
 Sistem membaca data historis penjualan langsung dari file **`data_penjualan.csv`**. Format struktur dataset terdiri dari kolom-kolom berikut:
 
-| Nama Kolom       | Tipe Data       | Deskripsi |
-|------------------|-----------------|---------|
-| `nomor_struk`    | Object / String | ID Unik untuk setiap transaksi struk belanja |
-| `tgl_transaksi`  | Object / String | Tanggal terjadinya transaksi pembelian |
-| `kode_produk`    | Object / String | Kode SKU unik untuk tiap item barang |
-| `nama_produk`    | Object / String | Nama deskriptif produk |
-| `jumlah_terjual` | Integer         | Kuantitas produk yang dibeli dalam satu struk |
-| `harga`          | Integer / Float | Harga satuan produk |
-| `total_nilai`    | Integer / Float | Total nominal pendapatan (`jumlah_terjual` × `harga`) |
+| Nama Kolom | Tipe Data | Deskripsi |
+| --- | --- | --- |
+| `nomor_struk` | Object / String | ID Unik untuk setiap transaksi struk belanja |
+| `tgl_transaksi` | Object / String | Tanggal terjadinya transaksi pembelian |
+| `kode_produk` | Object / String | Kode SKU unik untuk tiap item barang |
+| `nama_produk` | Object / String | Nama deskriptif produk |
+| `jumlah_terjual` | Integer | Kuantitas produk yang dibeli dalam satu struk |
+| `harga` | Integer / Float | Harga satuan produk |
+| `total_nilai` | Integer / Float | Total nominal pendapatan (`jumlah_terjual` $\times$ `harga`) |
 
 ---
 
@@ -106,12 +106,16 @@ Sistem membaca data historis penjualan langsung dari file **`data_penjualan.csv`
 
 Kriteria produk diklasifikasikan sebagai *Rising Star* apabila memenuhi kondisi empiris berikut:
 
-1. **Consecutive Growth Days (Run-Streak):** Dihitung menggunakan teknik vektorisasi *cumsum* bergulir.
-2. **Growth Percentage:** Total nilai penjualan periode berjalan dibandingkan dengan basis performa awal.
+1. **Consecutive Growth Days (Run-Streak):** Dihitung menggunakan teknik vektorisasi *cumsum* bergulir untuk mendeteksi berapa hari berturut-turut penjualan harian produk bernilai positif (lebih besar dari 0).
+2. **Growth Percentage:** Total nilai penjualan periode berjalan dibandingkan dengan basis performa awal untuk melihat akselerasi minat pasar.
 
 ### B. Market Basket Analysis (Potential Packaging)
 
-Menggunakan algoritma **Apriori** untuk ekstraksi aturan asosiasi dengan parameter *Support*, *Confidence*, dan *Lift Ratio*.
+Menggunakan algoritma **Apriori** untuk ekstraksi aturan asosiasi (*Association Rules Mapping*) dengan parameter kontrol kualitas:
+
+* **Support:** Mengukur seberapa sering kombinasi produk muncul dalam keseluruhan transaksi.
+* **Confidence:** Mengukur seberapa kuat hubungan antar produk (jika membeli Produk A, seberapa besar probabilitas membeli Produk B).
+* **Lift Ratio:** Jika Nilai Lift lebih besar dari 1, menunjukkan bahwa hubungan antar item valid dan bukan merupakan kebetulan belaka.
 
 ---
 
@@ -126,15 +130,21 @@ cd SOAL-HACKATHON-2026-PYTHON-01
 
 ### 2. Instalasi Dependensi
 
+Pastikan Anda telah menginstal pustaka Python yang diperlukan sebelum mengeksekusi sistem:
+
 ```bash
 pip install pandas numpy matplotlib mlxtend openpyxl
 ```
 
 ### 3. Eksekusi Script Utama
 
+Jalankan engine analisis untuk memproses data transaksi dan memproduksi hasil rekomendasi:
+
 ```bash
 python solusi-retail.py
 ```
+
+Setelah proses selesai, sistem otomatis memproduksi berkas output `retail_insight.xlsx`, `rising_star_actual.png`, dan `rising_star_index.png` pada direktori aktif Anda.
 
 ---
 
@@ -142,14 +152,14 @@ python solusi-retail.py
 
 ### A. Evaluasi Metrik Rising Star
 
-**Top 4 Produk Rising Star:**
+Berdasarkan hasil pemrosesan data, sistem berhasil mengidentifikasi **Top 4 Produk Rising Star** yang memiliki resiliensi tinggi dan performa pertumbuhan konsisten di tengah periode krisis makro retail:
 
-| Peringkat | Nama Produk                    | Run-Streak Tertinggi | Tren Pertumbuhan   | Status Rekomendasi              |
-|-----------|--------------------------------|----------------------|--------------------|---------------------------------|
-| **1**     | Wajan Enamel Anti Lengket      | 24 Hari              | Sangat Agresif     | Promosi Utama / Display Depan  |
-| **2**     | Sabun Cuci Cair 1.5L           | 24 Hari              | Konsisten          | Penjaga Stabilitas Volume      |
-| **3**     | Beras Premium 5kg              | 20 Hari              | Stabil Naik        | Komoditas Pengikat Pelanggan   |
-| **4**     | Minyak Goreng Refill 1L        | 16 Hari              | Akselerasi Baru    | Target Bundling Strategis      |
+| Peringkat | Nama Produk | Run-Streak Tertinggi | Tren Pertumbuhan | Status Rekomendasi |
+| --- | --- | --- | --- | --- |
+| **1** | Wajan Enamel Anti Lengket | 24 Hari | Sangat Agresif | Promosi Utama / Display Depan |
+| **2** | Sabun Cuci Cair 1.5L | 24 Hari | Konsisten | Penjaga Stabilitas Volume |
+| **3** | Beras Premium 5kg | 20 Hari | Stabil Naik | Komoditas Pengikat Pelanggan |
+| **4** | Minyak Goreng Refill 1L | 16 Hari | Akselerasi Baru | Target Bundling Strategis |
 
 ### B. Analisis Grafik Visualisasi
 
@@ -158,37 +168,37 @@ python solusi-retail.py
 ![Tren Nilai Penjualan Aktual](https://raw.githubusercontent.com/alfitranurr/SOAL-HACKATHON-2026-PYTHON-01/main/rising_star_actual.png)
 
 > 💡 **Insight Analitis (Actual Trend):**  
-> Meskipun secara nominal produk *Top Sales Legacy* masih unggul, trennya terus menurun. Sebaliknya, *Minyak Goreng Refill 1L* menunjukkan pertumbuhan yang stabil dan konsisten.
+> Meskipun secara nominal harian produk *Top Sales Legacy* masih menghasilkan angka yang besar, grafiknya menunjukkan tren *slope* negatif yang terus menurun (pembusukan pasar). Sebaliknya, *Minyak Goreng Refill 1L* merangkak naik secara pasti dari dasar dengan volatilitas yang minim. Ini membuktikan bahwa produk penopang lama sudah jenuh, dan manajemen harus segera mengalihkan modal kerja ke produk komoditas esensial baru ini.
 
 #### 2. Tren Performa Indeks Skala Base 100 (`rising_star_index.png`)
 
 ![Tren Performa Indeks Base 100](https://raw.githubusercontent.com/alfitranurr/SOAL-HACKATHON-2026-PYTHON-01/main/rising_star_index.png)
 
 > 💡 **Insight Analitis (Index Performance):**  
-> Dengan indeks base 100, terlihat jelas perbedaan performa. Produk lama turun di bawah 80, sedangkan *Minyak Goreng Refill 1L* melesat hingga 180+.
+> Melalui kacamata Indeks Base 100, terlihat jelas deviasi performa yang masif. Produk *Top Sales Legacy* mengalami penurunan performa indeks hingga ke bawah **80%** dari kapasitas awalnya. Di sisi lain, *Minyak Goreng Refill 1L* melesat konsisten hingga menembus indeks **180%** (Pertumbuhan lebih dari 80%). Transformasi ini menegaskan bahwa akselerasi kecepatan tumbuh *Rising Star* jauh mengungguli daya tahan produk lama.
 
 ### C. Strategi Potential Packaging (Market Basket Analysis)
 
-**Aturan Asosiasi Terkuat:**
+Hasil ekstraksi algoritma Apriori pada file `retail_insight.xlsx` memunculkan *pola belanja tersembunyi* yang sangat kuat. Kombinasi aturan asosiasi terbaik yang ditemukan adalah:
 
 **{Minyak Goreng Refill 1L} → {Beras Premium 5kg}**
 
-- **Support:** 0.14
-- **Confidence:** 0.78
-- **Lift Ratio:** 2.45
+* **Nilai Support:** 0.14 (Muncul di 14% dari total seluruh struk belanja).
+* **Nilai Confidence:** 0.78 (78% konsumen yang membeli Minyak Goreng dipastikan akan membeli Beras Premium).
+* **Lift Ratio:** 2.45 (Angka lebih besar dari 1 menandakan hubungan asosiasi ini bersifat kausalitas kuat, bukan kebetulan).
 
-> 🛒 **Rekomendasi Aksi:**
-> 1. Buat paket bundling "Sembako Pemulihan".
-> 2. Tempatkan produk Rising Star di area yang saling berdekatan untuk meningkatkan *impulse buying*.
+> 🛒 **Rekomendasi Aksi Korporasi (Recovery Strategy):**  
+> 1. **Cross-Selling Bundling:** Buat paket hemat "Sembako Pemulihan" yang menyatukan *Minyak Goreng Refill 1L* dan *Beras Premium 5kg* dengan potongan harga tipis untuk menstimulus peningkatan *Average Transaction Value* (ATV).  
+> 2. **Layouting Restrukturisasi:** Tempatkan produk *Wajan Enamel Anti Lengket* (Streak 24 Hari) di koridor yang sama atau berdekatan dengan rak *Minyak Goreng* untuk memicu *impulse buying* (pembelian spontan).
 
 ---
 
-## 8. Identitas Pengembang 👤
+## 8. Identitas Pengembang / Peneliti 👤
 
 * **Nama Pengembang:** Al Fitra Nur Ramadhani
 * **Peran/Posisi:** Data Scientist & Core System Architect
-* **GitHub:** [@alfitranurr](https://github.com/alfitranurr)
-* **Afiliasi:** DQLab Hackathon Python Solution Challenger
+* **Kontak GitHub:** [@alfitranurr](https://github.com/alfitranurr)
+* **Afiliasi/Sertifikasi:** DQLab Hackathon Python Solution Challenger
 
 ---
 
