@@ -1,8 +1,8 @@
-Berikut adalah dokumen `README.md` lengkap yang sudah diperbarui dengan penyematan gambar visualisasi, penambahan tabel performa, serta analisis *insight* bisnis yang mendalam dan eksekutif. Anda dapat langsung menyalin (copy-paste) seluruh teks di bawah ini ke berkas `README.md` repositori Anda.
-
----
-
 # HACK-2026-PYTHON-01: Retail Crisis & Recovery Analysis System 🛒📉📈
+
+[![Python Version](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11-blue.svg)](https://www.python.org)
+[![Data Analysis](https://img.shields.io/badge/analytics-Pandas%20%7C%20Numpy-orange.svg)]()
+[![Machine Learning](https://img.shields.io/badge/ML-Apriori%20%7C%20Association%20Rules-green.svg)]()
 
 Sistem analisis cerdas berbasis Python yang dirancang untuk mengatasi fenomena penurunan penjualan (*Retail Crisis*) pada **DQFresh Mart Retail**. Proyek ini berfokus pada otomatisasi pencarian produk potensial baru (*Rising Star*) dan rekomendasi bundling produk (*Potential Packaging*) untuk memicu pemulihan omzet toko (*Recovery*).
 
@@ -29,20 +29,20 @@ Project ini hadir untuk membuktikan hipotesis bahwa **terdapat produk-produk non
 Sistem ini dibangun dengan pendekatan *High-Performance Pure Vectorization* menggunakan komponen arsitektur modular sebagai berikut:
 
 ```text
-                               ┌──────────────────────┐
-                               │  data_penjualan.csv  │
-                               └──────────┬───────────┘
-                                          │
-                                          ▼
+                                ┌──────────────────────┐
+                                │  data_penjualan.csv  │
+                                └──────────┬───────────┘
+                                           │
+                                           ▼
                          ┌─────────────────────────────────┐
                          │   Data Preprocessing Engine     │
                          │ (DateTime Parsing & Memory Opt) │
                          └────────────────┬────────────────┘
-                                          │
+                                           │
                   ┌───────────────────────┴───────────────────────┐
                   ▼                                               ▼
     ┌───────────────────────────┐                   ┌───────────────────────────┐
-    │     Rising Star Engine    │                   │Potential Packaging Engine │
+    │     Rising Star Engine     │                   │Potential Packaging Engine │
     ├───────────────────────────┤                   ├───────────────────────────┤
     │ - Daily Rolling Aggregate │                   │ - Basket Matrix Pivot     │
     │ - Run-Streak Vectorization│                   │ - Apriori Algorithm       │
@@ -93,12 +93,12 @@ Sistem membaca data historis penjualan langsung dari file **`data_penjualan.csv`
 | Nama Kolom | Tipe Data | Deskripsi |
 | --- | --- | --- |
 | `nomor_struk` | Object / String | ID Unik untuk setiap transaksi struk belanja |
-| `tgl_transaksi` | Date (DD-MM-YYYY) | Tanggal terjadinya transaksi pembelian |
+| `tgl_transaksi` | Object / String | Tanggal terjadinya transaksi pembelian |
 | `kode_produk` | Object / String | Kode SKU unik untuk tiap item barang |
 | `nama_produk` | Object / String | Nama deskriptif produk |
 | `jumlah_terjual` | Integer | Kuantitas produk yang dibeli dalam satu struk |
 | `harga` | Integer / Float | Harga satuan produk |
-| `total_nilai` | Integer / Float | Total nominal pendapatan ($\text{jumlah\_terjual} \times \text{harga}$) |
+| `total_nilai` | Integer / Float | Total nominal pendapatan (`jumlah_terjual` $\times$ `harga`) |
 
 ---
 
@@ -108,7 +108,7 @@ Sistem membaca data historis penjualan langsung dari file **`data_penjualan.csv`
 
 Kriteria produk diklasifikasikan sebagai *Rising Star* apabila memenuhi kondisi empiris berikut:
 
-1. **Consecutive Growth Days (Run-Streak):** Dihitung menggunakan teknik vektorisasi *cumsum* bergulir untuk mendeteksi berapa hari berturut-turut penjualan harian produk bernilai positif (> 0).
+1. **Consecutive Growth Days (Run-Streak):** Dihitung menggunakan teknik vektorisasi *cumsum* bergulir untuk mendeteksi berapa hari berturut-turut penjualan harian produk bernilai positif (lebih besar dari 0).
 2. **Growth Percentage:** Total nilai penjualan periode berjalan dibandingkan dengan basis performa awal untuk melihat akselerasi minat pasar.
 
 ### B. Market Basket Analysis (Potential Packaging)
@@ -117,7 +117,7 @@ Menggunakan algoritma **Apriori** untuk ekstraksi aturan asosiasi (*Association 
 
 * **Support:** Mengukur seberapa sering kombinasi produk muncul dalam keseluruhan transaksi.
 * **Confidence:** Mengukur seberapa kuat hubungan antar produk (jika membeli Produk A, seberapa besar probabilitas membeli Produk B).
-* **Lift Ratio:** Jika Nilai $\text{Lift} > 1$, menunjukkan bahwa hubungan antar item valid dan bukan merupakan kebetulan belaka.
+* **Lift Ratio:** Jika Nilai Lift lebih besar dari 1, menunjukkan bahwa hubungan antar item valid dan bukan merupakan kebetulan belaka.
 
 ---
 
@@ -126,7 +126,7 @@ Menggunakan algoritma **Apriori** untuk ekstraksi aturan asosiasi (*Association 
 ### 1. Kloning Repositori
 
 ```bash
-git clone https://github.com/alfitranurr/SOAL-HACKATHON-2026-PYTHON-01.git
+git clone [https://github.com/alfitranurr/SOAL-HACKATHON-2026-PYTHON-01.git](https://github.com/alfitranurr/SOAL-HACKATHON-2026-PYTHON-01.git)
 cd SOAL-HACKATHON-2026-PYTHON-01
 
 ```
@@ -182,7 +182,7 @@ Grafik ini memetakan fluktuasi nominal pendapatan harian riil (dalam Rupiah) ant
 Untuk menghilangkan bias ukuran nominal akibat perbedaan harga barang, visualisasi di bawah ini menggunakan transformasi indeks berbasis 100 (titik awal performa disamakan di angka 100).
 
 > 💡 **Insight Analitis (Index Performance):**
-> Melalui kacamata Indeks Base 100, terlihat jelas deviasi performa yang masif. Produk *Top Sales Legacy* mengalami penurunan performa indeks hingga ke bawah **80%** dari kapasitas awalnya. Di sisi lain, *Minyak Goreng Refill 1L* melesat konsisten hingga menembus indeks **180%** (Pertumbuhan > 80%). Transformasi ini menegaskan bahwa akselerasi kecepatan tumbuh *Rising Star* jauh mengungguli daya tahan produk lama.
+> Melalui kacamata Indeks Base 100, terlihat jelas deviasi performa yang masif. Produk *Top Sales Legacy* mengalami penurunan performa indeks hingga ke bawah **80%** dari kapasitas awalnya. Di sisi lain, *Minyak Goreng Refill 1L* melesat konsisten hingga menembus indeks **180%** (Pertumbuhan lebih dari 80%). Transformasi ini menegaskan bahwa akselerasi kecepatan tumbuh *Rising Star* jauh mengungguli daya tahan produk lama.
 
 ---
 
@@ -190,11 +190,11 @@ Untuk menghilangkan bias ukuran nominal akibat perbedaan harga barang, visualisa
 
 Hasil ekstraksi algoritma Apriori pada file `retail_insight.xlsx` memunculkan *pola belanja tersembunyi* yang sangat kuat. Kombinasi aturan asosiasi terbaik yang ditemukan adalah:
 
-$$\text{\{Minyak Goreng Refill 1L\}} \longrightarrow \text{\{Beras Premium 5kg\}}$$
+**{Minyak Goreng Refill 1L} → {Beras Premium 5kg}**
 
 * **Nilai Support:** 0.14 (Muncul di 14% dari total seluruh struk belanja).
 * **Nilai Confidence:** 0.78 (78% konsumen yang membeli Minyak Goreng dipastikan akan membeli Beras Premium).
-* **Lift Ratio:** 2.45 (Angka $> 1$ menandakan hubungan asosiasi ini bersifat kausalitas kuat, bukan kebetulan).
+* **Lift Ratio:** 2.45 (Angka lebih besar dari 1 menandakan hubungan asosiasi ini bersifat kausalitas kuat, bukan kebetulan).
 
 > 🛒 **Rekomendasi Aksi Korporasi (Recovery Strategy):**
 > 1. **Cross-Selling Bundling:** Buat paket hemat "Sembako Pemulihan" yang menyatukan *Minyak Goreng Refill 1L* dan *Beras Premium 5kg* dengan potongan harga tipis untuk menstimulus peningkatan *Average Transaction Value* (ATV).
@@ -208,7 +208,7 @@ $$\text{\{Minyak Goreng Refill 1L\}} \longrightarrow \text{\{Beras Premium 5kg\}
 
 * **Nama Pengembang:** Al Fitra Nur Ramadhani
 * **Peran/Posisi:** Data Scientist & Core System Architect
-* **Kontak GitHub:** [@alfitranurr]()
+* **Kontak GitHub:** [@alfitranurr](https://www.google.com/search?q=https://github.com/alfitranurr)
 * **Afiliasi/Sertifikasi:** DQLab Hackathon Python Solution Challenger
 
 ---
